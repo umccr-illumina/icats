@@ -1,0 +1,15 @@
+{
+  "name": "icats",
+  "version": "1.0.0",
+  "description": "Illumina Connected Analytics API wrapper in TypeScript",
+  "main": "index.js",
+  "repository": "https://github.com/umccr-illumina/icats.git",
+  "author": "William Putra Intan <61998484+williamputraintan@users.noreply.github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.26.1"
+  },
+  "scripts": {
+    "codegen": "curl -o ica-openapi.yaml https://ica.illumina.com/ica/api/swagger/openapi_public.yaml; openapi-generator generate -i ./ica-openapi.yaml -g typescript-axios"
+  }
+}
