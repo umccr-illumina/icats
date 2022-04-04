@@ -18,10 +18,14 @@ export * from "./configuration";
 
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-export const BasicAxiosConfig: AxiosRequestConfig = {
+let BasicAxiosConfig: AxiosRequestConfig = {
   baseURL: "https://ica.illumina.com/ica/rest",
   method: "GET",
 };
+
+export function SetBasicConfig(newAxiosConfig: AxiosRequestConfig) {
+  BasicAxiosConfig = { ...BasicAxiosConfig, ...newAxiosConfig };
+}
 
 export async function RunAxios(
   additionalAxiosConfig?: AxiosRequestConfig

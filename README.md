@@ -17,13 +17,13 @@ See [axios package](https://axios-http.com/) docs used in this repo.
 ___
 
 The only requirements for this wrapper is `axios` as it is used for the api call. You can install this via npm or yarn.  
-npm command:
-```
-npm install axios
-```
 yarn command:
 ```
 yarn add axios
+```
+npm command:
+```
+npm install axios
 ```
 
 After the `axios` installation, you could clone this repository and ready to use. When importing this to your project, you specify the path to this `icats` directory.
@@ -32,32 +32,33 @@ After the `axios` installation, you could clone this repository and ready to use
 git clone https://github.com/umccr-illumina/icats.git
 ```
 
-Alternatively, you could clone this repository as part of your `node_modules`. This allows you to use `icats` without specifying the path to the this directory.
+Alternatively, you could clone this repository as part of your `node_modules`. This allows you to use `icats` without specifying the path to the this directory. This can be done via `npm` or `yarn`.
 
 ```
-git clone https://github.com/umccr-illumina/icats.git ./node_modules/icats  
+yarn add https://github.com/umccr-illumina/icats.git
 ```
+or 
 
-
-NOTE: Do not forget to add this clone step as part of your project build. Currently, `icats` is not published to `npm` or `yarn` and so doing `npm install` or `yarn add` in your project does not clone this project.
+```
+npm install https://github.com/umccr-illumina/icats.git
+```
 
 ### Usage
 ___
 
-The default `axios` config is set, you could modify the config if needed. See [axios docs](https://axios-http.com/docs/req_config) for reference. The default base_url is pointing to `https://ica.illumina.com/ica/rest`, if you somehow run the ICA api elsewhere do change this accordingly along with other parameter needed.
-Example chaning in `icats`
+The default `axios` config is set, you could modify the config if needed. See [axios docs](https://axios-http.com/docs/req_config) for reference. The default base_url is pointing to `https://ica.illumina.com/ica/rest`, if you somehow run the ICA api elsewhere do change this config accordingly.
+Example changing config in `icats`
 
 ```
-import { BasicAxiosConfig } from "icats";  // If icats not in node_modules, change "icats" to "./path_to/icats"
+import { SetBasicConfig } from "icats";  // If icats not in node_modules, change "icats" to "./path/to/icats/src"
 
-BasicAxiosConfig = {
-  ...BasicAxiosConfig,
+SetBasicConfig({
   "baseURL": "https://ica.illumina.com/ica/rest",
   "method": "GET",
 
   // other config here ...
 
-}
+})
 
 ```
 
@@ -72,7 +73,7 @@ SetToken("eyJh...shorten...Qssw5c")
 To use the API you could use basic config of axios and run it to `icats`. Ideally you would need additonal config to make the specific request to the api. Example, you would need to add api path, query parameter, etc.
 Example in taking project list from ica endpoint from `icats`. 
 ```
-import { RunAxios, ProjectPagedList, ProjectApiAxiosParamCreator } from "icats";  // If icats not in node_modules, change "icats" to "./path_to/icats"
+import { RunAxios, ProjectPagedList, ProjectApiAxiosParamCreator } from "icats";  // If icats not in node_modules, change "icats" to "./path/to/icats/src"
 
 async function getProjectData(): Promise<ProjectPagedList> {
   // Generate axios parameter
