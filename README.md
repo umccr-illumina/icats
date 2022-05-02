@@ -88,11 +88,11 @@ async function getProjectData(): Promise<ProjectPagedList> {
 console.log(getProjectData())
 
 ```
-### Usage
+### Modification
 ___
 
 Feel free to modify/improve by creating a PR to the `main` branch.
 
-The OpenApi is created via OpenApi with `typescript-axios` as the engine, to update this base code please use `yarn codegen` that will update based on the Swagger.
+The OpenApi is created via OpenApi with `typescript-axios` as the engine, to update this OpenAPI code please use `yarn codegen` that will update based on the Swagger.
 
-For simplictiy, the project is build and published in this repository. To re-build and publish, please use `yarn build` to update the lib folder.
+For simplictiy, the project is build and published in this repository. To re-build and publish, please use `yarn build` to update the lib folder (This will allow usage from `yarn add https://github.com/umccr-illumina/icats.git` command).
