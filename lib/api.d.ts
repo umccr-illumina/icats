@@ -291,6 +291,12 @@ export interface AnalysisDataInput {
      * @memberof AnalysisDataInput
      */
     'dataIds'?: Array<string> | null;
+    /**
+     *
+     * @type {Array<AnalysisInputDataMount>}
+     * @memberof AnalysisDataInput
+     */
+    'mounts'?: Array<AnalysisInputDataMount> | null;
 }
 /**
  *
@@ -310,6 +316,25 @@ export interface AnalysisInput {
      * @memberof AnalysisInput
      */
     'analysisData'?: Array<AnalysisData> | null;
+}
+/**
+ *
+ * @export
+ * @interface AnalysisInputDataMount
+ */
+export interface AnalysisInputDataMount {
+    /**
+     *
+     * @type {string}
+     * @memberof AnalysisInputDataMount
+     */
+    'dataId': string;
+    /**
+     * The mount path is the location where the input file will be located on the machine that is running the pipeline. The use of a relative path is encouraged, but an absolute path is also allowed. The path should end with the file name, which may differ from the original input data.
+     * @type {string}
+     * @memberof AnalysisInputDataMount
+     */
+    'mountPath': string;
 }
 /**
  *
@@ -450,6 +475,12 @@ export interface AnalysisStep {
      * @memberof AnalysisStep
      */
     'id': string;
+    /**
+     *
+     * @type {string}
+     * @memberof AnalysisStep
+     */
+    'name': string;
     /**
      * The status of the analysis step
      * @type {string}
@@ -1800,6 +1831,12 @@ export interface CreateCwlAnalysis {
      */
     'analysisStorageId'?: string | null;
     /**
+     * The id of the folder in which the output folder should be created.
+     * @type {string}
+     * @memberof CreateCwlAnalysis
+     */
+    'outputParentFolderId'?: string | null;
+    /**
      *
      * @type {CwlAnalysisInput}
      * @memberof CreateCwlAnalysis
@@ -1825,7 +1862,7 @@ export interface CreateData {
      */
     'folderId'?: string | null;
     /**
-     * The absolute path of the folder you want to create this new data in. Alternatively, the folderId attribute could be used as well for this. In case the folder path does not yet exist, it will be automatically created.
+     * The absolute path of the folder you want to create this new data in which must end with \'/\'. Alternatively, the folderId attribute could be used as well for this. In case the folder path does not yet exist, it will be automatically created.
      * @type {string}
      * @memberof CreateData
      */
@@ -1939,6 +1976,12 @@ export interface CreateNextflowAnalysis {
      * @memberof CreateNextflowAnalysis
      */
     'analysisStorageId'?: string | null;
+    /**
+     * The id of the folder in which the output folder should be created.
+     * @type {string}
+     * @memberof CreateNextflowAnalysis
+     */
+    'outputParentFolderId'?: string | null;
     /**
      *
      * @type {NextflowAnalysisInput}
@@ -2468,6 +2511,12 @@ export interface CwlAnalysisJsonInput {
      * @memberof CwlAnalysisJsonInput
      */
     'dataIds'?: Array<string> | null;
+    /**
+     *
+     * @type {Array<AnalysisInputDataMount>}
+     * @memberof CwlAnalysisJsonInput
+     */
+    'mounts'?: Array<AnalysisInputDataMount> | null;
 }
 export declare const CwlAnalysisJsonInputObjectTypeEnum: {
     readonly Structured: "STRUCTURED";
@@ -3717,6 +3766,12 @@ export interface InputPart {
     };
     /**
      *
+     * @type {boolean}
+     * @memberof InputPart
+     */
+    'contentTypeFromMessage'?: boolean;
+    /**
+     *
      * @type {InputPartMediaType}
      * @memberof InputPart
      */
@@ -3727,12 +3782,6 @@ export interface InputPart {
      * @memberof InputPart
      */
     'bodyAsString'?: string;
-    /**
-     *
-     * @type {boolean}
-     * @memberof InputPart
-     */
-    'contentTypeFromMessage'?: boolean;
 }
 /**
  *
@@ -4557,7 +4606,7 @@ export interface Problem {
      */
     'instance'?: string;
     /**
-     * Problem parameters for e.g. request body attribute validation. Not in scope of RFC 7807.
+     * Problem parameters for e.g. request body attribute validation. This attribute is not in scope of RFC 7807.
      * @type {{ [key: string]: string; }}
      * @memberof Problem
      */
@@ -4793,6 +4842,38 @@ export interface ProjectBaseTableList {
      * @memberof ProjectBaseTableList
      */
     'items': Array<ProjectBaseTable>;
+}
+/**
+ *
+ * @export
+ * @interface ProjectBundle
+ */
+export interface ProjectBundle {
+    /**
+     *
+     * @type {Bundle}
+     * @memberof ProjectBundle
+     */
+    'bundle': Bundle;
+    /**
+     *
+     * @type {string}
+     * @memberof ProjectBundle
+     */
+    'projectId': string;
+}
+/**
+ *
+ * @export
+ * @interface ProjectBundleList
+ */
+export interface ProjectBundleList {
+    /**
+     *
+     * @type {Array<ProjectBundle>}
+     * @memberof ProjectBundleList
+     */
+    'items': Array<ProjectBundle>;
 }
 /**
  *
@@ -8287,6 +8368,122 @@ export declare class DataFormatApi extends BaseAPI {
     getDataFormats(pageOffset?: string, pageToken?: string, pageSize?: string, sort?: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<DataFormatPagedList, any>>;
 }
 /**
+ * EntitledBundleApi - axios parameter creator
+ * @export
+ */
+export declare const EntitledBundleApiAxiosParamCreator: (configuration?: Configuration | undefined) => {
+    /**
+     *
+     * @summary Retrieve an entitled bundle.
+     * @param {string} entitledBundleId The ID of the entitled bundle to retrieve
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getEntitledBundle: (entitledBundleId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+    /**
+     *
+     * @summary Retrieve a list of entitled bundles.
+     * @param {string} [search] Search
+     * @param {string} [userTags] User tags to filter on
+     * @param {string} [technicalTags] Technical tags to filter on
+     * @param {string} [pageOffset] The amount of rows to skip in the result. Ideally this is a multiple of the size parameter.
+     * @param {string} [pageToken] The cursor to get subsequent results. The value to use is returned in the result when using cursor-based pagination.
+     * @param {string} [pageSize] The amount of rows to return. Use in combination with the offset or cursor parameter to get subsequent results.
+     * @param {string} [sort] Which field to order the results by. The default order is ascending, suffix with \&#39; desc\&#39; to sort descending (suffix \&#39; asc\&#39; also works for ascending). Multiple values should be separated with commas. An example: \&quot;?sort&#x3D;dateCreated, lastName desc\&quot;  The attributes for which sorting is supported: - name - shortDescription
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getEntitledBundles: (search?: string | undefined, userTags?: string | undefined, technicalTags?: string | undefined, pageOffset?: string | undefined, pageToken?: string | undefined, pageSize?: string | undefined, sort?: string | undefined, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+};
+/**
+ * EntitledBundleApi - functional programming interface
+ * @export
+ */
+export declare const EntitledBundleApiFp: (configuration?: Configuration | undefined) => {
+    /**
+     *
+     * @summary Retrieve an entitled bundle.
+     * @param {string} entitledBundleId The ID of the entitled bundle to retrieve
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getEntitledBundle(entitledBundleId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<Bundle>>;
+    /**
+     *
+     * @summary Retrieve a list of entitled bundles.
+     * @param {string} [search] Search
+     * @param {string} [userTags] User tags to filter on
+     * @param {string} [technicalTags] Technical tags to filter on
+     * @param {string} [pageOffset] The amount of rows to skip in the result. Ideally this is a multiple of the size parameter.
+     * @param {string} [pageToken] The cursor to get subsequent results. The value to use is returned in the result when using cursor-based pagination.
+     * @param {string} [pageSize] The amount of rows to return. Use in combination with the offset or cursor parameter to get subsequent results.
+     * @param {string} [sort] Which field to order the results by. The default order is ascending, suffix with \&#39; desc\&#39; to sort descending (suffix \&#39; asc\&#39; also works for ascending). Multiple values should be separated with commas. An example: \&quot;?sort&#x3D;dateCreated, lastName desc\&quot;  The attributes for which sorting is supported: - name - shortDescription
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getEntitledBundles(search?: string | undefined, userTags?: string | undefined, technicalTags?: string | undefined, pageOffset?: string | undefined, pageToken?: string | undefined, pageSize?: string | undefined, sort?: string | undefined, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<BundlePagedList>>;
+};
+/**
+ * EntitledBundleApi - factory interface
+ * @export
+ */
+export declare const EntitledBundleApiFactory: (configuration?: Configuration | undefined, basePath?: string | undefined, axios?: AxiosInstance | undefined) => {
+    /**
+     *
+     * @summary Retrieve an entitled bundle.
+     * @param {string} entitledBundleId The ID of the entitled bundle to retrieve
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getEntitledBundle(entitledBundleId: string, options?: any): AxiosPromise<Bundle>;
+    /**
+     *
+     * @summary Retrieve a list of entitled bundles.
+     * @param {string} [search] Search
+     * @param {string} [userTags] User tags to filter on
+     * @param {string} [technicalTags] Technical tags to filter on
+     * @param {string} [pageOffset] The amount of rows to skip in the result. Ideally this is a multiple of the size parameter.
+     * @param {string} [pageToken] The cursor to get subsequent results. The value to use is returned in the result when using cursor-based pagination.
+     * @param {string} [pageSize] The amount of rows to return. Use in combination with the offset or cursor parameter to get subsequent results.
+     * @param {string} [sort] Which field to order the results by. The default order is ascending, suffix with \&#39; desc\&#39; to sort descending (suffix \&#39; asc\&#39; also works for ascending). Multiple values should be separated with commas. An example: \&quot;?sort&#x3D;dateCreated, lastName desc\&quot;  The attributes for which sorting is supported: - name - shortDescription
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getEntitledBundles(search?: string | undefined, userTags?: string | undefined, technicalTags?: string | undefined, pageOffset?: string | undefined, pageToken?: string | undefined, pageSize?: string | undefined, sort?: string | undefined, options?: any): AxiosPromise<BundlePagedList>;
+};
+/**
+ * EntitledBundleApi - object-oriented interface
+ * @export
+ * @class EntitledBundleApi
+ * @extends {BaseAPI}
+ */
+export declare class EntitledBundleApi extends BaseAPI {
+    /**
+     *
+     * @summary Retrieve an entitled bundle.
+     * @param {string} entitledBundleId The ID of the entitled bundle to retrieve
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EntitledBundleApi
+     */
+    getEntitledBundle(entitledBundleId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<Bundle, any>>;
+    /**
+     *
+     * @summary Retrieve a list of entitled bundles.
+     * @param {string} [search] Search
+     * @param {string} [userTags] User tags to filter on
+     * @param {string} [technicalTags] Technical tags to filter on
+     * @param {string} [pageOffset] The amount of rows to skip in the result. Ideally this is a multiple of the size parameter.
+     * @param {string} [pageToken] The cursor to get subsequent results. The value to use is returned in the result when using cursor-based pagination.
+     * @param {string} [pageSize] The amount of rows to return. Use in combination with the offset or cursor parameter to get subsequent results.
+     * @param {string} [sort] Which field to order the results by. The default order is ascending, suffix with \&#39; desc\&#39; to sort descending (suffix \&#39; asc\&#39; also works for ascending). Multiple values should be separated with commas. An example: \&quot;?sort&#x3D;dateCreated, lastName desc\&quot;  The attributes for which sorting is supported: - name - shortDescription
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EntitledBundleApi
+     */
+    getEntitledBundles(search?: string, userTags?: string, technicalTags?: string, pageOffset?: string, pageToken?: string, pageSize?: string, sort?: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<BundlePagedList, any>>;
+}
+/**
  * EntitlementDetailApi - axios parameter creator
  * @export
  */
@@ -9100,6 +9297,23 @@ export declare const ProjectApiAxiosParamCreator: (configuration?: Configuration
     getProject: (projectId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
     /**
      *
+     * @summary Retrieve a project bundle.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getProjectBundle: (projectId: string, bundleId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+    /**
+     *
+     * @summary Retrieve project bundles.
+     * @param {string} projectId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getProjectBundles: (projectId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+    /**
+     *
      * @summary Retrieve a list of projects.
      * @param {string} [search] Search
      * @param {Array<string>} [userTags] User tags to filter on
@@ -9114,6 +9328,24 @@ export declare const ProjectApiAxiosParamCreator: (configuration?: Configuration
      * @throws {RequiredError}
      */
     getProjects: (search?: string | undefined, userTags?: string[] | undefined, technicalTags?: string[] | undefined, includeHiddenProjects?: boolean | undefined, region?: string | undefined, pageOffset?: string | undefined, pageToken?: string | undefined, pageSize?: string | undefined, sort?: string | undefined, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+    /**
+     *
+     * @summary Link a bundle to a project.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    linkProjectBundle: (projectId: string, bundleId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+    /**
+     *
+     * @summary Unlink a bundle from a project.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    unlinkProjectBundle: (projectId: string, bundleId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
     /**
      * Fields which can be updated: - shortDescription - projectInformation - billingMode - dataSharingEnabled - tags - storageBundle - metaDataModel
      * @summary Update a project.
@@ -9148,6 +9380,23 @@ export declare const ProjectApiFp: (configuration?: Configuration | undefined) =
     getProject(projectId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<Project>>;
     /**
      *
+     * @summary Retrieve a project bundle.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<ProjectBundle>>;
+    /**
+     *
+     * @summary Retrieve project bundles.
+     * @param {string} projectId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getProjectBundles(projectId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<ProjectBundleList>>;
+    /**
+     *
      * @summary Retrieve a list of projects.
      * @param {string} [search] Search
      * @param {Array<string>} [userTags] User tags to filter on
@@ -9162,6 +9411,24 @@ export declare const ProjectApiFp: (configuration?: Configuration | undefined) =
      * @throws {RequiredError}
      */
     getProjects(search?: string | undefined, userTags?: string[] | undefined, technicalTags?: string[] | undefined, includeHiddenProjects?: boolean | undefined, region?: string | undefined, pageOffset?: string | undefined, pageToken?: string | undefined, pageSize?: string | undefined, sort?: string | undefined, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<ProjectPagedList>>;
+    /**
+     *
+     * @summary Link a bundle to a project.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    linkProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<ProjectBundle>>;
+    /**
+     *
+     * @summary Unlink a bundle from a project.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    unlinkProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<void>>;
     /**
      * Fields which can be updated: - shortDescription - projectInformation - billingMode - dataSharingEnabled - tags - storageBundle - metaDataModel
      * @summary Update a project.
@@ -9196,6 +9463,23 @@ export declare const ProjectApiFactory: (configuration?: Configuration | undefin
     getProject(projectId: string, options?: any): AxiosPromise<Project>;
     /**
      *
+     * @summary Retrieve a project bundle.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getProjectBundle(projectId: string, bundleId: string, options?: any): AxiosPromise<ProjectBundle>;
+    /**
+     *
+     * @summary Retrieve project bundles.
+     * @param {string} projectId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getProjectBundles(projectId: string, options?: any): AxiosPromise<ProjectBundleList>;
+    /**
+     *
      * @summary Retrieve a list of projects.
      * @param {string} [search] Search
      * @param {Array<string>} [userTags] User tags to filter on
@@ -9210,6 +9494,24 @@ export declare const ProjectApiFactory: (configuration?: Configuration | undefin
      * @throws {RequiredError}
      */
     getProjects(search?: string | undefined, userTags?: string[] | undefined, technicalTags?: string[] | undefined, includeHiddenProjects?: boolean | undefined, region?: string | undefined, pageOffset?: string | undefined, pageToken?: string | undefined, pageSize?: string | undefined, sort?: string | undefined, options?: any): AxiosPromise<ProjectPagedList>;
+    /**
+     *
+     * @summary Link a bundle to a project.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    linkProjectBundle(projectId: string, bundleId: string, options?: any): AxiosPromise<ProjectBundle>;
+    /**
+     *
+     * @summary Unlink a bundle from a project.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    unlinkProjectBundle(projectId: string, bundleId: string, options?: any): AxiosPromise<void>;
     /**
      * Fields which can be updated: - shortDescription - projectInformation - billingMode - dataSharingEnabled - tags - storageBundle - metaDataModel
      * @summary Update a project.
@@ -9248,6 +9550,25 @@ export declare class ProjectApi extends BaseAPI {
     getProject(projectId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<Project, any>>;
     /**
      *
+     * @summary Retrieve a project bundle.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectApi
+     */
+    getProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<ProjectBundle, any>>;
+    /**
+     *
+     * @summary Retrieve project bundles.
+     * @param {string} projectId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectApi
+     */
+    getProjectBundles(projectId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<ProjectBundleList, any>>;
+    /**
+     *
      * @summary Retrieve a list of projects.
      * @param {string} [search] Search
      * @param {Array<string>} [userTags] User tags to filter on
@@ -9263,6 +9584,26 @@ export declare class ProjectApi extends BaseAPI {
      * @memberof ProjectApi
      */
     getProjects(search?: string, userTags?: Array<string>, technicalTags?: Array<string>, includeHiddenProjects?: boolean, region?: string, pageOffset?: string, pageToken?: string, pageSize?: string, sort?: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<ProjectPagedList, any>>;
+    /**
+     *
+     * @summary Link a bundle to a project.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectApi
+     */
+    linkProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<ProjectBundle, any>>;
+    /**
+     *
+     * @summary Unlink a bundle from a project.
+     * @param {string} projectId
+     * @param {string} bundleId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectApi
+     */
+    unlinkProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<void, any>>;
     /**
      * Fields which can be updated: - shortDescription - projectInformation - billingMode - dataSharingEnabled - tags - storageBundle - metaDataModel
      * @summary Update a project.
@@ -9293,20 +9634,20 @@ export declare const ProjectAnalysisApiAxiosParamCreator: (configuration?: Confi
      *
      * @summary Create and start an analysis for a CWL pipeline.
      * @param {string} projectId
-     * @param {CreateCwlAnalysis} createCwlAnalysis
+     * @param {CreateCwlAnalysis} [createCwlAnalysis]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createCwlAnalysis: (projectId: string, createCwlAnalysis: CreateCwlAnalysis, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+    createCwlAnalysis: (projectId: string, createCwlAnalysis?: CreateCwlAnalysis | undefined, options?: AxiosRequestConfig) => Promise<RequestArgs>;
     /**
      *
      * @summary Create and start an analysis for a Nextflow pipeline.
      * @param {string} projectId
-     * @param {CreateNextflowAnalysis} createNextflowAnalysis
+     * @param {CreateNextflowAnalysis} [createNextflowAnalysis]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createNextflowAnalysis: (projectId: string, createNextflowAnalysis: CreateNextflowAnalysis, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+    createNextflowAnalysis: (projectId: string, createNextflowAnalysis?: CreateNextflowAnalysis | undefined, options?: AxiosRequestConfig) => Promise<RequestArgs>;
     /**
      *
      * @summary Retrieve the list of project analyses.
@@ -9409,20 +9750,20 @@ export declare const ProjectAnalysisApiFp: (configuration?: Configuration | unde
      *
      * @summary Create and start an analysis for a CWL pipeline.
      * @param {string} projectId
-     * @param {CreateCwlAnalysis} createCwlAnalysis
+     * @param {CreateCwlAnalysis} [createCwlAnalysis]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createCwlAnalysis(projectId: string, createCwlAnalysis: CreateCwlAnalysis, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<Analysis>>;
+    createCwlAnalysis(projectId: string, createCwlAnalysis?: CreateCwlAnalysis | undefined, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<Analysis>>;
     /**
      *
      * @summary Create and start an analysis for a Nextflow pipeline.
      * @param {string} projectId
-     * @param {CreateNextflowAnalysis} createNextflowAnalysis
+     * @param {CreateNextflowAnalysis} [createNextflowAnalysis]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createNextflowAnalysis(projectId: string, createNextflowAnalysis: CreateNextflowAnalysis, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<Analysis>>;
+    createNextflowAnalysis(projectId: string, createNextflowAnalysis?: CreateNextflowAnalysis | undefined, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<Analysis>>;
     /**
      *
      * @summary Retrieve the list of project analyses.
@@ -9525,20 +9866,20 @@ export declare const ProjectAnalysisApiFactory: (configuration?: Configuration |
      *
      * @summary Create and start an analysis for a CWL pipeline.
      * @param {string} projectId
-     * @param {CreateCwlAnalysis} createCwlAnalysis
+     * @param {CreateCwlAnalysis} [createCwlAnalysis]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createCwlAnalysis(projectId: string, createCwlAnalysis: CreateCwlAnalysis, options?: any): AxiosPromise<Analysis>;
+    createCwlAnalysis(projectId: string, createCwlAnalysis?: CreateCwlAnalysis | undefined, options?: any): AxiosPromise<Analysis>;
     /**
      *
      * @summary Create and start an analysis for a Nextflow pipeline.
      * @param {string} projectId
-     * @param {CreateNextflowAnalysis} createNextflowAnalysis
+     * @param {CreateNextflowAnalysis} [createNextflowAnalysis]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createNextflowAnalysis(projectId: string, createNextflowAnalysis: CreateNextflowAnalysis, options?: any): AxiosPromise<Analysis>;
+    createNextflowAnalysis(projectId: string, createNextflowAnalysis?: CreateNextflowAnalysis | undefined, options?: any): AxiosPromise<Analysis>;
     /**
      *
      * @summary Retrieve the list of project analyses.
@@ -9644,22 +9985,22 @@ export declare class ProjectAnalysisApi extends BaseAPI {
      *
      * @summary Create and start an analysis for a CWL pipeline.
      * @param {string} projectId
-     * @param {CreateCwlAnalysis} createCwlAnalysis
+     * @param {CreateCwlAnalysis} [createCwlAnalysis]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProjectAnalysisApi
      */
-    createCwlAnalysis(projectId: string, createCwlAnalysis: CreateCwlAnalysis, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<Analysis, any>>;
+    createCwlAnalysis(projectId: string, createCwlAnalysis?: CreateCwlAnalysis, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<Analysis, any>>;
     /**
      *
      * @summary Create and start an analysis for a Nextflow pipeline.
      * @param {string} projectId
-     * @param {CreateNextflowAnalysis} createNextflowAnalysis
+     * @param {CreateNextflowAnalysis} [createNextflowAnalysis]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProjectAnalysisApi
      */
-    createNextflowAnalysis(projectId: string, createNextflowAnalysis: CreateNextflowAnalysis, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<Analysis, any>>;
+    createNextflowAnalysis(projectId: string, createNextflowAnalysis?: CreateNextflowAnalysis, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<Analysis, any>>;
     /**
      *
      * @summary Retrieve the list of project analyses.
@@ -10291,6 +10632,16 @@ export declare class ProjectCustomNotificationSubscriptionsApi extends BaseAPI {
  */
 export declare const ProjectDataApiAxiosParamCreator: (configuration?: Configuration | undefined) => {
     /**
+     *
+     * @summary Add secondary data to data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {string} secondaryDataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    addSecondaryData: (projectId: string, dataId: string, secondaryDataId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+    /**
      * Endpoint for scheduling this data for archival. This will also archive all files and directories below that data.This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
      * @summary Schedule this data for archival.
      * @param {string} projectId
@@ -10320,7 +10671,7 @@ export declare const ProjectDataApiAxiosParamCreator: (configuration?: Configura
      */
     createDataInProject: (projectId: string, createData?: CreateData | undefined, options?: AxiosRequestConfig) => Promise<RequestArgs>;
     /**
-     * Can be used to download a file directly from the region where it is located, no connector is needed. Only small files can be downloaded, otherwise a response with status 400 will be returned if the file is too big.
+     * Can be used to download a file directly from the region where it is located, no connector is needed.
      * @summary Retrieve a download URL for this data.
      * @param {string} projectId
      * @param {string} dataId
@@ -10507,6 +10858,15 @@ export declare const ProjectDataApiAxiosParamCreator: (configuration?: Configura
     getProjectsLinkedToData: (projectId: string, dataId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
     /**
      *
+     * @summary Retrieve a list of secondary data for data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getSecondaryData: (projectId: string, dataId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+    /**
+     *
      * @summary Link data to this project.
      * @param {string} projectId
      * @param {string} dataId
@@ -10514,6 +10874,16 @@ export declare const ProjectDataApiAxiosParamCreator: (configuration?: Configura
      * @throws {RequiredError}
      */
     linkDataToProject: (projectId: string, dataId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
+    /**
+     *
+     * @summary Remove secondary data from data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {string} secondaryDataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    removeSecondaryData: (projectId: string, dataId: string, secondaryDataId: string, options?: AxiosRequestConfig) => Promise<RequestArgs>;
     /**
      * Endpoint for scheduling a download for the data specified by the ID to a connector. This download will only start when the connector is running. This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
      * @summary Schedule a download.
@@ -10559,6 +10929,16 @@ export declare const ProjectDataApiAxiosParamCreator: (configuration?: Configura
  */
 export declare const ProjectDataApiFp: (configuration?: Configuration | undefined) => {
     /**
+     *
+     * @summary Add secondary data to data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {string} secondaryDataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    addSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<void>>;
+    /**
      * Endpoint for scheduling this data for archival. This will also archive all files and directories below that data.This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
      * @summary Schedule this data for archival.
      * @param {string} projectId
@@ -10588,7 +10968,7 @@ export declare const ProjectDataApiFp: (configuration?: Configuration | undefine
      */
     createDataInProject(projectId: string, createData?: CreateData | undefined, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<ProjectData>>;
     /**
-     * Can be used to download a file directly from the region where it is located, no connector is needed. Only small files can be downloaded, otherwise a response with status 400 will be returned if the file is too big.
+     * Can be used to download a file directly from the region where it is located, no connector is needed.
      * @summary Retrieve a download URL for this data.
      * @param {string} projectId
      * @param {string} dataId
@@ -10775,6 +11155,15 @@ export declare const ProjectDataApiFp: (configuration?: Configuration | undefine
     getProjectsLinkedToData(projectId: string, dataId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<ProjectList>>;
     /**
      *
+     * @summary Retrieve a list of secondary data for data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getSecondaryData(projectId: string, dataId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<DataList>>;
+    /**
+     *
      * @summary Link data to this project.
      * @param {string} projectId
      * @param {string} dataId
@@ -10782,6 +11171,16 @@ export declare const ProjectDataApiFp: (configuration?: Configuration | undefine
      * @throws {RequiredError}
      */
     linkDataToProject(projectId: string, dataId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<ProjectData>>;
+    /**
+     *
+     * @summary Remove secondary data from data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {string} secondaryDataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    removeSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: AxiosRequestConfig<any> | undefined): Promise<(axios?: AxiosInstance | undefined, basePath?: string | undefined) => AxiosPromise<void>>;
     /**
      * Endpoint for scheduling a download for the data specified by the ID to a connector. This download will only start when the connector is running. This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
      * @summary Schedule a download.
@@ -10827,6 +11226,16 @@ export declare const ProjectDataApiFp: (configuration?: Configuration | undefine
  */
 export declare const ProjectDataApiFactory: (configuration?: Configuration | undefined, basePath?: string | undefined, axios?: AxiosInstance | undefined) => {
     /**
+     *
+     * @summary Add secondary data to data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {string} secondaryDataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    addSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: any): AxiosPromise<void>;
+    /**
      * Endpoint for scheduling this data for archival. This will also archive all files and directories below that data.This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
      * @summary Schedule this data for archival.
      * @param {string} projectId
@@ -10856,7 +11265,7 @@ export declare const ProjectDataApiFactory: (configuration?: Configuration | und
      */
     createDataInProject(projectId: string, createData?: CreateData | undefined, options?: any): AxiosPromise<ProjectData>;
     /**
-     * Can be used to download a file directly from the region where it is located, no connector is needed. Only small files can be downloaded, otherwise a response with status 400 will be returned if the file is too big.
+     * Can be used to download a file directly from the region where it is located, no connector is needed.
      * @summary Retrieve a download URL for this data.
      * @param {string} projectId
      * @param {string} dataId
@@ -11043,6 +11452,15 @@ export declare const ProjectDataApiFactory: (configuration?: Configuration | und
     getProjectsLinkedToData(projectId: string, dataId: string, options?: any): AxiosPromise<ProjectList>;
     /**
      *
+     * @summary Retrieve a list of secondary data for data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getSecondaryData(projectId: string, dataId: string, options?: any): AxiosPromise<DataList>;
+    /**
+     *
      * @summary Link data to this project.
      * @param {string} projectId
      * @param {string} dataId
@@ -11050,6 +11468,16 @@ export declare const ProjectDataApiFactory: (configuration?: Configuration | und
      * @throws {RequiredError}
      */
     linkDataToProject(projectId: string, dataId: string, options?: any): AxiosPromise<ProjectData>;
+    /**
+     *
+     * @summary Remove secondary data from data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {string} secondaryDataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    removeSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: any): AxiosPromise<void>;
     /**
      * Endpoint for scheduling a download for the data specified by the ID to a connector. This download will only start when the connector is running. This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
      * @summary Schedule a download.
@@ -11097,6 +11525,17 @@ export declare const ProjectDataApiFactory: (configuration?: Configuration | und
  */
 export declare class ProjectDataApi extends BaseAPI {
     /**
+     *
+     * @summary Add secondary data to data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {string} secondaryDataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectDataApi
+     */
+    addSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<void, any>>;
+    /**
      * Endpoint for scheduling this data for archival. This will also archive all files and directories below that data.This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
      * @summary Schedule this data for archival.
      * @param {string} projectId
@@ -11129,7 +11568,7 @@ export declare class ProjectDataApi extends BaseAPI {
      */
     createDataInProject(projectId: string, createData?: CreateData, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<ProjectData, any>>;
     /**
-     * Can be used to download a file directly from the region where it is located, no connector is needed. Only small files can be downloaded, otherwise a response with status 400 will be returned if the file is too big.
+     * Can be used to download a file directly from the region where it is located, no connector is needed.
      * @summary Retrieve a download URL for this data.
      * @param {string} projectId
      * @param {string} dataId
@@ -11329,6 +11768,16 @@ export declare class ProjectDataApi extends BaseAPI {
     getProjectsLinkedToData(projectId: string, dataId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<ProjectList, any>>;
     /**
      *
+     * @summary Retrieve a list of secondary data for data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectDataApi
+     */
+    getSecondaryData(projectId: string, dataId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<DataList, any>>;
+    /**
+     *
      * @summary Link data to this project.
      * @param {string} projectId
      * @param {string} dataId
@@ -11337,6 +11786,17 @@ export declare class ProjectDataApi extends BaseAPI {
      * @memberof ProjectDataApi
      */
     linkDataToProject(projectId: string, dataId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<ProjectData, any>>;
+    /**
+     *
+     * @summary Remove secondary data from data.
+     * @param {string} projectId
+     * @param {string} dataId
+     * @param {string} secondaryDataId
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectDataApi
+     */
+    removeSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: AxiosRequestConfig): Promise<import("axios").AxiosResponse<void, any>>;
     /**
      * Endpoint for scheduling a download for the data specified by the ID to a connector. This download will only start when the connector is running. This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
      * @summary Schedule a download.

@@ -306,6 +306,12 @@ export interface AnalysisDataInput {
      * @memberof AnalysisDataInput
      */
     'dataIds'?: Array<string> | null;
+    /**
+     * 
+     * @type {Array<AnalysisInputDataMount>}
+     * @memberof AnalysisDataInput
+     */
+    'mounts'?: Array<AnalysisInputDataMount> | null;
 }
 /**
  * 
@@ -325,6 +331,25 @@ export interface AnalysisInput {
      * @memberof AnalysisInput
      */
     'analysisData'?: Array<AnalysisData> | null;
+}
+/**
+ * 
+ * @export
+ * @interface AnalysisInputDataMount
+ */
+export interface AnalysisInputDataMount {
+    /**
+     * 
+     * @type {string}
+     * @memberof AnalysisInputDataMount
+     */
+    'dataId': string;
+    /**
+     * The mount path is the location where the input file will be located on the machine that is running the pipeline. The use of a relative path is encouraged, but an absolute path is also allowed. The path should end with the file name, which may differ from the original input data.
+     * @type {string}
+     * @memberof AnalysisInputDataMount
+     */
+    'mountPath': string;
 }
 /**
  * 
@@ -465,6 +490,12 @@ export interface AnalysisStep {
      * @memberof AnalysisStep
      */
     'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AnalysisStep
+     */
+    'name': string;
     /**
      * The status of the analysis step
      * @type {string}
@@ -1843,6 +1874,12 @@ export interface CreateCwlAnalysis {
      */
     'analysisStorageId'?: string | null;
     /**
+     * The id of the folder in which the output folder should be created.
+     * @type {string}
+     * @memberof CreateCwlAnalysis
+     */
+    'outputParentFolderId'?: string | null;
+    /**
      * 
      * @type {CwlAnalysisInput}
      * @memberof CreateCwlAnalysis
@@ -1868,7 +1905,7 @@ export interface CreateData {
      */
     'folderId'?: string | null;
     /**
-     * The absolute path of the folder you want to create this new data in. Alternatively, the folderId attribute could be used as well for this. In case the folder path does not yet exist, it will be automatically created.
+     * The absolute path of the folder you want to create this new data in which must end with \'/\'. Alternatively, the folderId attribute could be used as well for this. In case the folder path does not yet exist, it will be automatically created.
      * @type {string}
      * @memberof CreateData
      */
@@ -1985,6 +2022,12 @@ export interface CreateNextflowAnalysis {
      * @memberof CreateNextflowAnalysis
      */
     'analysisStorageId'?: string | null;
+    /**
+     * The id of the folder in which the output folder should be created.
+     * @type {string}
+     * @memberof CreateNextflowAnalysis
+     */
+    'outputParentFolderId'?: string | null;
     /**
      * 
      * @type {NextflowAnalysisInput}
@@ -2537,6 +2580,12 @@ export interface CwlAnalysisJsonInput {
      * @memberof CwlAnalysisJsonInput
      */
     'dataIds'?: Array<string> | null;
+    /**
+     * 
+     * @type {Array<AnalysisInputDataMount>}
+     * @memberof CwlAnalysisJsonInput
+     */
+    'mounts'?: Array<AnalysisInputDataMount> | null;
 }
 
 export const CwlAnalysisJsonInputObjectTypeEnum = {
@@ -3817,6 +3866,12 @@ export interface InputPart {
     'headers'?: { [key: string]: Array<string>; };
     /**
      * 
+     * @type {boolean}
+     * @memberof InputPart
+     */
+    'contentTypeFromMessage'?: boolean;
+    /**
+     * 
      * @type {InputPartMediaType}
      * @memberof InputPart
      */
@@ -3827,12 +3882,6 @@ export interface InputPart {
      * @memberof InputPart
      */
     'bodyAsString'?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof InputPart
-     */
-    'contentTypeFromMessage'?: boolean;
 }
 /**
  * 
@@ -4670,7 +4719,7 @@ export interface Problem {
      */
     'instance'?: string;
     /**
-     * Problem parameters for e.g. request body attribute validation. Not in scope of RFC 7807.
+     * Problem parameters for e.g. request body attribute validation. This attribute is not in scope of RFC 7807.
      * @type {{ [key: string]: string; }}
      * @memberof Problem
      */
@@ -4911,6 +4960,38 @@ export interface ProjectBaseTableList {
      * @memberof ProjectBaseTableList
      */
     'items': Array<ProjectBaseTable>;
+}
+/**
+ * 
+ * @export
+ * @interface ProjectBundle
+ */
+export interface ProjectBundle {
+    /**
+     * 
+     * @type {Bundle}
+     * @memberof ProjectBundle
+     */
+    'bundle': Bundle;
+    /**
+     * 
+     * @type {string}
+     * @memberof ProjectBundle
+     */
+    'projectId': string;
+}
+/**
+ * 
+ * @export
+ * @interface ProjectBundleList
+ */
+export interface ProjectBundleList {
+    /**
+     * 
+     * @type {Array<ProjectBundle>}
+     * @memberof ProjectBundleList
+     */
+    'items': Array<ProjectBundle>;
 }
 /**
  * 
@@ -10216,6 +10297,241 @@ export class DataFormatApi extends BaseAPI {
 
 
 /**
+ * EntitledBundleApi - axios parameter creator
+ * @export
+ */
+export const EntitledBundleApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Retrieve an entitled bundle.
+         * @param {string} entitledBundleId The ID of the entitled bundle to retrieve
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getEntitledBundle: async (entitledBundleId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'entitledBundleId' is not null or undefined
+            assertParamExists('getEntitledBundle', 'entitledBundleId', entitledBundleId)
+            const localVarPath = `/api/entitledbundles/{entitledBundleId}`
+                .replace(`{${"entitledBundleId"}}`, encodeURIComponent(String(entitledBundleId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-API-Key", configuration)
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Retrieve a list of entitled bundles.
+         * @param {string} [search] Search
+         * @param {string} [userTags] User tags to filter on
+         * @param {string} [technicalTags] Technical tags to filter on
+         * @param {string} [pageOffset] The amount of rows to skip in the result. Ideally this is a multiple of the size parameter.
+         * @param {string} [pageToken] The cursor to get subsequent results. The value to use is returned in the result when using cursor-based pagination.
+         * @param {string} [pageSize] The amount of rows to return. Use in combination with the offset or cursor parameter to get subsequent results.
+         * @param {string} [sort] Which field to order the results by. The default order is ascending, suffix with \&#39; desc\&#39; to sort descending (suffix \&#39; asc\&#39; also works for ascending). Multiple values should be separated with commas. An example: \&quot;?sort&#x3D;dateCreated, lastName desc\&quot;  The attributes for which sorting is supported: - name - shortDescription
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getEntitledBundles: async (search?: string, userTags?: string, technicalTags?: string, pageOffset?: string, pageToken?: string, pageSize?: string, sort?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/entitledbundles`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-API-Key", configuration)
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (userTags !== undefined) {
+                localVarQueryParameter['userTags'] = userTags;
+            }
+
+            if (technicalTags !== undefined) {
+                localVarQueryParameter['technicalTags'] = technicalTags;
+            }
+
+            if (pageOffset !== undefined) {
+                localVarQueryParameter['pageOffset'] = pageOffset;
+            }
+
+            if (pageToken !== undefined) {
+                localVarQueryParameter['pageToken'] = pageToken;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
+            }
+
+            if (sort !== undefined) {
+                localVarQueryParameter['sort'] = sort;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * EntitledBundleApi - functional programming interface
+ * @export
+ */
+export const EntitledBundleApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = EntitledBundleApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Retrieve an entitled bundle.
+         * @param {string} entitledBundleId The ID of the entitled bundle to retrieve
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getEntitledBundle(entitledBundleId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Bundle>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getEntitledBundle(entitledBundleId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Retrieve a list of entitled bundles.
+         * @param {string} [search] Search
+         * @param {string} [userTags] User tags to filter on
+         * @param {string} [technicalTags] Technical tags to filter on
+         * @param {string} [pageOffset] The amount of rows to skip in the result. Ideally this is a multiple of the size parameter.
+         * @param {string} [pageToken] The cursor to get subsequent results. The value to use is returned in the result when using cursor-based pagination.
+         * @param {string} [pageSize] The amount of rows to return. Use in combination with the offset or cursor parameter to get subsequent results.
+         * @param {string} [sort] Which field to order the results by. The default order is ascending, suffix with \&#39; desc\&#39; to sort descending (suffix \&#39; asc\&#39; also works for ascending). Multiple values should be separated with commas. An example: \&quot;?sort&#x3D;dateCreated, lastName desc\&quot;  The attributes for which sorting is supported: - name - shortDescription
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getEntitledBundles(search?: string, userTags?: string, technicalTags?: string, pageOffset?: string, pageToken?: string, pageSize?: string, sort?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BundlePagedList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getEntitledBundles(search, userTags, technicalTags, pageOffset, pageToken, pageSize, sort, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+    }
+};
+
+/**
+ * EntitledBundleApi - factory interface
+ * @export
+ */
+export const EntitledBundleApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = EntitledBundleApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Retrieve an entitled bundle.
+         * @param {string} entitledBundleId The ID of the entitled bundle to retrieve
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getEntitledBundle(entitledBundleId: string, options?: any): AxiosPromise<Bundle> {
+            return localVarFp.getEntitledBundle(entitledBundleId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Retrieve a list of entitled bundles.
+         * @param {string} [search] Search
+         * @param {string} [userTags] User tags to filter on
+         * @param {string} [technicalTags] Technical tags to filter on
+         * @param {string} [pageOffset] The amount of rows to skip in the result. Ideally this is a multiple of the size parameter.
+         * @param {string} [pageToken] The cursor to get subsequent results. The value to use is returned in the result when using cursor-based pagination.
+         * @param {string} [pageSize] The amount of rows to return. Use in combination with the offset or cursor parameter to get subsequent results.
+         * @param {string} [sort] Which field to order the results by. The default order is ascending, suffix with \&#39; desc\&#39; to sort descending (suffix \&#39; asc\&#39; also works for ascending). Multiple values should be separated with commas. An example: \&quot;?sort&#x3D;dateCreated, lastName desc\&quot;  The attributes for which sorting is supported: - name - shortDescription
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getEntitledBundles(search?: string, userTags?: string, technicalTags?: string, pageOffset?: string, pageToken?: string, pageSize?: string, sort?: string, options?: any): AxiosPromise<BundlePagedList> {
+            return localVarFp.getEntitledBundles(search, userTags, technicalTags, pageOffset, pageToken, pageSize, sort, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * EntitledBundleApi - object-oriented interface
+ * @export
+ * @class EntitledBundleApi
+ * @extends {BaseAPI}
+ */
+export class EntitledBundleApi extends BaseAPI {
+    /**
+     * 
+     * @summary Retrieve an entitled bundle.
+     * @param {string} entitledBundleId The ID of the entitled bundle to retrieve
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EntitledBundleApi
+     */
+    public getEntitledBundle(entitledBundleId: string, options?: AxiosRequestConfig) {
+        return EntitledBundleApiFp(this.configuration).getEntitledBundle(entitledBundleId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Retrieve a list of entitled bundles.
+     * @param {string} [search] Search
+     * @param {string} [userTags] User tags to filter on
+     * @param {string} [technicalTags] Technical tags to filter on
+     * @param {string} [pageOffset] The amount of rows to skip in the result. Ideally this is a multiple of the size parameter.
+     * @param {string} [pageToken] The cursor to get subsequent results. The value to use is returned in the result when using cursor-based pagination.
+     * @param {string} [pageSize] The amount of rows to return. Use in combination with the offset or cursor parameter to get subsequent results.
+     * @param {string} [sort] Which field to order the results by. The default order is ascending, suffix with \&#39; desc\&#39; to sort descending (suffix \&#39; asc\&#39; also works for ascending). Multiple values should be separated with commas. An example: \&quot;?sort&#x3D;dateCreated, lastName desc\&quot;  The attributes for which sorting is supported: - name - shortDescription
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EntitledBundleApi
+     */
+    public getEntitledBundles(search?: string, userTags?: string, technicalTags?: string, pageOffset?: string, pageToken?: string, pageSize?: string, sort?: string, options?: AxiosRequestConfig) {
+        return EntitledBundleApiFp(this.configuration).getEntitledBundles(search, userTags, technicalTags, pageOffset, pageToken, pageSize, sort, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+/**
  * EntitlementDetailApi - axios parameter creator
  * @export
  */
@@ -11960,6 +12276,92 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @summary Retrieve a project bundle.
+         * @param {string} projectId 
+         * @param {string} bundleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getProjectBundle: async (projectId: string, bundleId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'projectId' is not null or undefined
+            assertParamExists('getProjectBundle', 'projectId', projectId)
+            // verify required parameter 'bundleId' is not null or undefined
+            assertParamExists('getProjectBundle', 'bundleId', bundleId)
+            const localVarPath = `/api/projects/{projectId}/bundles/{bundleId}`
+                .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)))
+                .replace(`{${"bundleId"}}`, encodeURIComponent(String(bundleId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-API-Key", configuration)
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Retrieve project bundles.
+         * @param {string} projectId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getProjectBundles: async (projectId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'projectId' is not null or undefined
+            assertParamExists('getProjectBundles', 'projectId', projectId)
+            const localVarPath = `/api/projects/{projectId}/bundles`
+                .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-API-Key", configuration)
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Retrieve a list of projects.
          * @param {string} [search] Search
          * @param {Array<string>} [userTags] User tags to filter on
@@ -12028,6 +12430,96 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
             if (sort !== undefined) {
                 localVarQueryParameter['sort'] = sort;
             }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Link a bundle to a project.
+         * @param {string} projectId 
+         * @param {string} bundleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        linkProjectBundle: async (projectId: string, bundleId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'projectId' is not null or undefined
+            assertParamExists('linkProjectBundle', 'projectId', projectId)
+            // verify required parameter 'bundleId' is not null or undefined
+            assertParamExists('linkProjectBundle', 'bundleId', bundleId)
+            const localVarPath = `/api/projects/{projectId}/bundles/{bundleId}`
+                .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)))
+                .replace(`{${"bundleId"}}`, encodeURIComponent(String(bundleId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-API-Key", configuration)
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Unlink a bundle from a project.
+         * @param {string} projectId 
+         * @param {string} bundleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        unlinkProjectBundle: async (projectId: string, bundleId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'projectId' is not null or undefined
+            assertParamExists('unlinkProjectBundle', 'projectId', projectId)
+            // verify required parameter 'bundleId' is not null or undefined
+            assertParamExists('unlinkProjectBundle', 'bundleId', bundleId)
+            const localVarPath = `/api/projects/{projectId}/bundles/{bundleId}`
+                .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)))
+                .replace(`{${"bundleId"}}`, encodeURIComponent(String(bundleId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-API-Key", configuration)
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -12124,6 +12616,29 @@ export const ProjectApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Retrieve a project bundle.
+         * @param {string} projectId 
+         * @param {string} bundleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectBundle>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getProjectBundle(projectId, bundleId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Retrieve project bundles.
+         * @param {string} projectId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getProjectBundles(projectId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectBundleList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getProjectBundles(projectId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary Retrieve a list of projects.
          * @param {string} [search] Search
          * @param {Array<string>} [userTags] User tags to filter on
@@ -12139,6 +12654,30 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          */
         async getProjects(search?: string, userTags?: Array<string>, technicalTags?: Array<string>, includeHiddenProjects?: boolean, region?: string, pageOffset?: string, pageToken?: string, pageSize?: string, sort?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectPagedList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getProjects(search, userTags, technicalTags, includeHiddenProjects, region, pageOffset, pageToken, pageSize, sort, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Link a bundle to a project.
+         * @param {string} projectId 
+         * @param {string} bundleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async linkProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectBundle>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.linkProjectBundle(projectId, bundleId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Unlink a bundle from a project.
+         * @param {string} projectId 
+         * @param {string} bundleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async unlinkProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.unlinkProjectBundle(projectId, bundleId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -12186,6 +12725,27 @@ export const ProjectApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @summary Retrieve a project bundle.
+         * @param {string} projectId 
+         * @param {string} bundleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getProjectBundle(projectId: string, bundleId: string, options?: any): AxiosPromise<ProjectBundle> {
+            return localVarFp.getProjectBundle(projectId, bundleId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Retrieve project bundles.
+         * @param {string} projectId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getProjectBundles(projectId: string, options?: any): AxiosPromise<ProjectBundleList> {
+            return localVarFp.getProjectBundles(projectId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Retrieve a list of projects.
          * @param {string} [search] Search
          * @param {Array<string>} [userTags] User tags to filter on
@@ -12201,6 +12761,28 @@ export const ProjectApiFactory = function (configuration?: Configuration, basePa
          */
         getProjects(search?: string, userTags?: Array<string>, technicalTags?: Array<string>, includeHiddenProjects?: boolean, region?: string, pageOffset?: string, pageToken?: string, pageSize?: string, sort?: string, options?: any): AxiosPromise<ProjectPagedList> {
             return localVarFp.getProjects(search, userTags, technicalTags, includeHiddenProjects, region, pageOffset, pageToken, pageSize, sort, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Link a bundle to a project.
+         * @param {string} projectId 
+         * @param {string} bundleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        linkProjectBundle(projectId: string, bundleId: string, options?: any): AxiosPromise<ProjectBundle> {
+            return localVarFp.linkProjectBundle(projectId, bundleId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Unlink a bundle from a project.
+         * @param {string} projectId 
+         * @param {string} bundleId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        unlinkProjectBundle(projectId: string, bundleId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.unlinkProjectBundle(projectId, bundleId, options).then((request) => request(axios, basePath));
         },
         /**
          * Fields which can be updated: - shortDescription - projectInformation - billingMode - dataSharingEnabled - tags - storageBundle - metaDataModel
@@ -12250,6 +12832,31 @@ export class ProjectApi extends BaseAPI {
 
     /**
      * 
+     * @summary Retrieve a project bundle.
+     * @param {string} projectId 
+     * @param {string} bundleId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectApi
+     */
+    public getProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig) {
+        return ProjectApiFp(this.configuration).getProjectBundle(projectId, bundleId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Retrieve project bundles.
+     * @param {string} projectId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectApi
+     */
+    public getProjectBundles(projectId: string, options?: AxiosRequestConfig) {
+        return ProjectApiFp(this.configuration).getProjectBundles(projectId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Retrieve a list of projects.
      * @param {string} [search] Search
      * @param {Array<string>} [userTags] User tags to filter on
@@ -12266,6 +12873,32 @@ export class ProjectApi extends BaseAPI {
      */
     public getProjects(search?: string, userTags?: Array<string>, technicalTags?: Array<string>, includeHiddenProjects?: boolean, region?: string, pageOffset?: string, pageToken?: string, pageSize?: string, sort?: string, options?: AxiosRequestConfig) {
         return ProjectApiFp(this.configuration).getProjects(search, userTags, technicalTags, includeHiddenProjects, region, pageOffset, pageToken, pageSize, sort, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Link a bundle to a project.
+     * @param {string} projectId 
+     * @param {string} bundleId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectApi
+     */
+    public linkProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig) {
+        return ProjectApiFp(this.configuration).linkProjectBundle(projectId, bundleId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Unlink a bundle from a project.
+     * @param {string} projectId 
+     * @param {string} bundleId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectApi
+     */
+    public unlinkProjectBundle(projectId: string, bundleId: string, options?: AxiosRequestConfig) {
+        return ProjectApiFp(this.configuration).unlinkProjectBundle(projectId, bundleId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -12339,15 +12972,13 @@ export const ProjectAnalysisApiAxiosParamCreator = function (configuration?: Con
          * 
          * @summary Create and start an analysis for a CWL pipeline.
          * @param {string} projectId 
-         * @param {CreateCwlAnalysis} createCwlAnalysis 
+         * @param {CreateCwlAnalysis} [createCwlAnalysis] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createCwlAnalysis: async (projectId: string, createCwlAnalysis: CreateCwlAnalysis, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createCwlAnalysis: async (projectId: string, createCwlAnalysis?: CreateCwlAnalysis, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'projectId' is not null or undefined
             assertParamExists('createCwlAnalysis', 'projectId', projectId)
-            // verify required parameter 'createCwlAnalysis' is not null or undefined
-            assertParamExists('createCwlAnalysis', 'createCwlAnalysis', createCwlAnalysis)
             const localVarPath = `/api/projects/{projectId}/analysis:cwl`
                 .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -12386,15 +13017,13 @@ export const ProjectAnalysisApiAxiosParamCreator = function (configuration?: Con
          * 
          * @summary Create and start an analysis for a Nextflow pipeline.
          * @param {string} projectId 
-         * @param {CreateNextflowAnalysis} createNextflowAnalysis 
+         * @param {CreateNextflowAnalysis} [createNextflowAnalysis] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createNextflowAnalysis: async (projectId: string, createNextflowAnalysis: CreateNextflowAnalysis, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createNextflowAnalysis: async (projectId: string, createNextflowAnalysis?: CreateNextflowAnalysis, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'projectId' is not null or undefined
             assertParamExists('createNextflowAnalysis', 'projectId', projectId)
-            // verify required parameter 'createNextflowAnalysis' is not null or undefined
-            assertParamExists('createNextflowAnalysis', 'createNextflowAnalysis', createNextflowAnalysis)
             const localVarPath = `/api/projects/{projectId}/analysis:nextflow`
                 .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -12870,11 +13499,11 @@ export const ProjectAnalysisApiFp = function(configuration?: Configuration) {
          * 
          * @summary Create and start an analysis for a CWL pipeline.
          * @param {string} projectId 
-         * @param {CreateCwlAnalysis} createCwlAnalysis 
+         * @param {CreateCwlAnalysis} [createCwlAnalysis] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createCwlAnalysis(projectId: string, createCwlAnalysis: CreateCwlAnalysis, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Analysis>> {
+        async createCwlAnalysis(projectId: string, createCwlAnalysis?: CreateCwlAnalysis, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Analysis>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createCwlAnalysis(projectId, createCwlAnalysis, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -12882,11 +13511,11 @@ export const ProjectAnalysisApiFp = function(configuration?: Configuration) {
          * 
          * @summary Create and start an analysis for a Nextflow pipeline.
          * @param {string} projectId 
-         * @param {CreateNextflowAnalysis} createNextflowAnalysis 
+         * @param {CreateNextflowAnalysis} [createNextflowAnalysis] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createNextflowAnalysis(projectId: string, createNextflowAnalysis: CreateNextflowAnalysis, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Analysis>> {
+        async createNextflowAnalysis(projectId: string, createNextflowAnalysis?: CreateNextflowAnalysis, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Analysis>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createNextflowAnalysis(projectId, createNextflowAnalysis, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -13022,22 +13651,22 @@ export const ProjectAnalysisApiFactory = function (configuration?: Configuration
          * 
          * @summary Create and start an analysis for a CWL pipeline.
          * @param {string} projectId 
-         * @param {CreateCwlAnalysis} createCwlAnalysis 
+         * @param {CreateCwlAnalysis} [createCwlAnalysis] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createCwlAnalysis(projectId: string, createCwlAnalysis: CreateCwlAnalysis, options?: any): AxiosPromise<Analysis> {
+        createCwlAnalysis(projectId: string, createCwlAnalysis?: CreateCwlAnalysis, options?: any): AxiosPromise<Analysis> {
             return localVarFp.createCwlAnalysis(projectId, createCwlAnalysis, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Create and start an analysis for a Nextflow pipeline.
          * @param {string} projectId 
-         * @param {CreateNextflowAnalysis} createNextflowAnalysis 
+         * @param {CreateNextflowAnalysis} [createNextflowAnalysis] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createNextflowAnalysis(projectId: string, createNextflowAnalysis: CreateNextflowAnalysis, options?: any): AxiosPromise<Analysis> {
+        createNextflowAnalysis(projectId: string, createNextflowAnalysis?: CreateNextflowAnalysis, options?: any): AxiosPromise<Analysis> {
             return localVarFp.createNextflowAnalysis(projectId, createNextflowAnalysis, options).then((request) => request(axios, basePath));
         },
         /**
@@ -13166,12 +13795,12 @@ export class ProjectAnalysisApi extends BaseAPI {
      * 
      * @summary Create and start an analysis for a CWL pipeline.
      * @param {string} projectId 
-     * @param {CreateCwlAnalysis} createCwlAnalysis 
+     * @param {CreateCwlAnalysis} [createCwlAnalysis] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProjectAnalysisApi
      */
-    public createCwlAnalysis(projectId: string, createCwlAnalysis: CreateCwlAnalysis, options?: AxiosRequestConfig) {
+    public createCwlAnalysis(projectId: string, createCwlAnalysis?: CreateCwlAnalysis, options?: AxiosRequestConfig) {
         return ProjectAnalysisApiFp(this.configuration).createCwlAnalysis(projectId, createCwlAnalysis, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -13179,12 +13808,12 @@ export class ProjectAnalysisApi extends BaseAPI {
      * 
      * @summary Create and start an analysis for a Nextflow pipeline.
      * @param {string} projectId 
-     * @param {CreateNextflowAnalysis} createNextflowAnalysis 
+     * @param {CreateNextflowAnalysis} [createNextflowAnalysis] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ProjectAnalysisApi
      */
-    public createNextflowAnalysis(projectId: string, createNextflowAnalysis: CreateNextflowAnalysis, options?: AxiosRequestConfig) {
+    public createNextflowAnalysis(projectId: string, createNextflowAnalysis?: CreateNextflowAnalysis, options?: AxiosRequestConfig) {
         return ProjectAnalysisApiFp(this.configuration).createNextflowAnalysis(projectId, createNextflowAnalysis, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -14389,6 +15018,55 @@ export class ProjectCustomNotificationSubscriptionsApi extends BaseAPI {
 export const ProjectDataApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
+         * 
+         * @summary Add secondary data to data.
+         * @param {string} projectId 
+         * @param {string} dataId 
+         * @param {string} secondaryDataId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addSecondaryData: async (projectId: string, dataId: string, secondaryDataId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'projectId' is not null or undefined
+            assertParamExists('addSecondaryData', 'projectId', projectId)
+            // verify required parameter 'dataId' is not null or undefined
+            assertParamExists('addSecondaryData', 'dataId', dataId)
+            // verify required parameter 'secondaryDataId' is not null or undefined
+            assertParamExists('addSecondaryData', 'secondaryDataId', secondaryDataId)
+            const localVarPath = `/api/projects/{projectId}/data/{dataId}/secondaryData/{secondaryDataId}`
+                .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)))
+                .replace(`{${"dataId"}}`, encodeURIComponent(String(dataId)))
+                .replace(`{${"secondaryDataId"}}`, encodeURIComponent(String(secondaryDataId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-API-Key", configuration)
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Endpoint for scheduling this data for archival. This will also archive all files and directories below that data.This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
          * @summary Schedule this data for archival.
          * @param {string} projectId 
@@ -14532,7 +15210,7 @@ export const ProjectDataApiAxiosParamCreator = function (configuration?: Configu
             };
         },
         /**
-         * Can be used to download a file directly from the region where it is located, no connector is needed. Only small files can be downloaded, otherwise a response with status 400 will be returned if the file is too big.
+         * Can be used to download a file directly from the region where it is located, no connector is needed.
          * @summary Retrieve a download URL for this data.
          * @param {string} projectId 
          * @param {string} dataId 
@@ -15479,6 +16157,51 @@ export const ProjectDataApiAxiosParamCreator = function (configuration?: Configu
         },
         /**
          * 
+         * @summary Retrieve a list of secondary data for data.
+         * @param {string} projectId 
+         * @param {string} dataId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSecondaryData: async (projectId: string, dataId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'projectId' is not null or undefined
+            assertParamExists('getSecondaryData', 'projectId', projectId)
+            // verify required parameter 'dataId' is not null or undefined
+            assertParamExists('getSecondaryData', 'dataId', dataId)
+            const localVarPath = `/api/projects/{projectId}/data/{dataId}/secondaryData`
+                .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)))
+                .replace(`{${"dataId"}}`, encodeURIComponent(String(dataId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-API-Key", configuration)
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Link data to this project.
          * @param {string} projectId 
          * @param {string} dataId 
@@ -15501,6 +16224,55 @@ export const ProjectDataApiAxiosParamCreator = function (configuration?: Configu
             }
 
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-API-Key", configuration)
+
+            // authentication JwtAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Remove secondary data from data.
+         * @param {string} projectId 
+         * @param {string} dataId 
+         * @param {string} secondaryDataId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        removeSecondaryData: async (projectId: string, dataId: string, secondaryDataId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'projectId' is not null or undefined
+            assertParamExists('removeSecondaryData', 'projectId', projectId)
+            // verify required parameter 'dataId' is not null or undefined
+            assertParamExists('removeSecondaryData', 'dataId', dataId)
+            // verify required parameter 'secondaryDataId' is not null or undefined
+            assertParamExists('removeSecondaryData', 'secondaryDataId', secondaryDataId)
+            const localVarPath = `/api/projects/{projectId}/data/{dataId}/secondaryData/{secondaryDataId}`
+                .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)))
+                .replace(`{${"dataId"}}`, encodeURIComponent(String(dataId)))
+                .replace(`{${"secondaryDataId"}}`, encodeURIComponent(String(secondaryDataId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15723,6 +16495,19 @@ export const ProjectDataApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ProjectDataApiAxiosParamCreator(configuration)
     return {
         /**
+         * 
+         * @summary Add secondary data to data.
+         * @param {string} projectId 
+         * @param {string} dataId 
+         * @param {string} secondaryDataId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async addSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.addSecondaryData(projectId, dataId, secondaryDataId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Endpoint for scheduling this data for archival. This will also archive all files and directories below that data.This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
          * @summary Schedule this data for archival.
          * @param {string} projectId 
@@ -15761,7 +16546,7 @@ export const ProjectDataApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Can be used to download a file directly from the region where it is located, no connector is needed. Only small files can be downloaded, otherwise a response with status 400 will be returned if the file is too big.
+         * Can be used to download a file directly from the region where it is located, no connector is needed.
          * @summary Retrieve a download URL for this data.
          * @param {string} projectId 
          * @param {string} dataId 
@@ -15987,6 +16772,18 @@ export const ProjectDataApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Retrieve a list of secondary data for data.
+         * @param {string} projectId 
+         * @param {string} dataId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSecondaryData(projectId: string, dataId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DataList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSecondaryData(projectId, dataId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @summary Link data to this project.
          * @param {string} projectId 
          * @param {string} dataId 
@@ -15995,6 +16792,19 @@ export const ProjectDataApiFp = function(configuration?: Configuration) {
          */
         async linkDataToProject(projectId: string, dataId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectData>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.linkDataToProject(projectId, dataId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @summary Remove secondary data from data.
+         * @param {string} projectId 
+         * @param {string} dataId 
+         * @param {string} secondaryDataId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async removeSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.removeSecondaryData(projectId, dataId, secondaryDataId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -16058,6 +16868,18 @@ export const ProjectDataApiFactory = function (configuration?: Configuration, ba
     const localVarFp = ProjectDataApiFp(configuration)
     return {
         /**
+         * 
+         * @summary Add secondary data to data.
+         * @param {string} projectId 
+         * @param {string} dataId 
+         * @param {string} secondaryDataId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        addSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.addSecondaryData(projectId, dataId, secondaryDataId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Endpoint for scheduling this data for archival. This will also archive all files and directories below that data.This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
          * @summary Schedule this data for archival.
          * @param {string} projectId 
@@ -16093,7 +16915,7 @@ export const ProjectDataApiFactory = function (configuration?: Configuration, ba
             return localVarFp.createDataInProject(projectId, createData, options).then((request) => request(axios, basePath));
         },
         /**
-         * Can be used to download a file directly from the region where it is located, no connector is needed. Only small files can be downloaded, otherwise a response with status 400 will be returned if the file is too big.
+         * Can be used to download a file directly from the region where it is located, no connector is needed.
          * @summary Retrieve a download URL for this data.
          * @param {string} projectId 
          * @param {string} dataId 
@@ -16306,6 +17128,17 @@ export const ProjectDataApiFactory = function (configuration?: Configuration, ba
         },
         /**
          * 
+         * @summary Retrieve a list of secondary data for data.
+         * @param {string} projectId 
+         * @param {string} dataId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSecondaryData(projectId: string, dataId: string, options?: any): AxiosPromise<DataList> {
+            return localVarFp.getSecondaryData(projectId, dataId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Link data to this project.
          * @param {string} projectId 
          * @param {string} dataId 
@@ -16314,6 +17147,18 @@ export const ProjectDataApiFactory = function (configuration?: Configuration, ba
          */
         linkDataToProject(projectId: string, dataId: string, options?: any): AxiosPromise<ProjectData> {
             return localVarFp.linkDataToProject(projectId, dataId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Remove secondary data from data.
+         * @param {string} projectId 
+         * @param {string} dataId 
+         * @param {string} secondaryDataId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        removeSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.removeSecondaryData(projectId, dataId, secondaryDataId, options).then((request) => request(axios, basePath));
         },
         /**
          * Endpoint for scheduling a download for the data specified by the ID to a connector. This download will only start when the connector is running. This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
@@ -16372,6 +17217,20 @@ export const ProjectDataApiFactory = function (configuration?: Configuration, ba
  */
 export class ProjectDataApi extends BaseAPI {
     /**
+     * 
+     * @summary Add secondary data to data.
+     * @param {string} projectId 
+     * @param {string} dataId 
+     * @param {string} secondaryDataId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectDataApi
+     */
+    public addSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: AxiosRequestConfig) {
+        return ProjectDataApiFp(this.configuration).addSecondaryData(projectId, dataId, secondaryDataId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Endpoint for scheduling this data for archival. This will also archive all files and directories below that data.This is a non-RESTful endpoint, as the path of this endpoint is not representing a REST resource.
      * @summary Schedule this data for archival.
      * @param {string} projectId 
@@ -16413,7 +17272,7 @@ export class ProjectDataApi extends BaseAPI {
     }
 
     /**
-     * Can be used to download a file directly from the region where it is located, no connector is needed. Only small files can be downloaded, otherwise a response with status 400 will be returned if the file is too big.
+     * Can be used to download a file directly from the region where it is located, no connector is needed.
      * @summary Retrieve a download URL for this data.
      * @param {string} projectId 
      * @param {string} dataId 
@@ -16652,6 +17511,19 @@ export class ProjectDataApi extends BaseAPI {
 
     /**
      * 
+     * @summary Retrieve a list of secondary data for data.
+     * @param {string} projectId 
+     * @param {string} dataId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectDataApi
+     */
+    public getSecondaryData(projectId: string, dataId: string, options?: AxiosRequestConfig) {
+        return ProjectDataApiFp(this.configuration).getSecondaryData(projectId, dataId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Link data to this project.
      * @param {string} projectId 
      * @param {string} dataId 
@@ -16661,6 +17533,20 @@ export class ProjectDataApi extends BaseAPI {
      */
     public linkDataToProject(projectId: string, dataId: string, options?: AxiosRequestConfig) {
         return ProjectDataApiFp(this.configuration).linkDataToProject(projectId, dataId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Remove secondary data from data.
+     * @param {string} projectId 
+     * @param {string} dataId 
+     * @param {string} secondaryDataId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectDataApi
+     */
+    public removeSecondaryData(projectId: string, dataId: string, secondaryDataId: string, options?: AxiosRequestConfig) {
+        return ProjectDataApiFp(this.configuration).removeSecondaryData(projectId, dataId, secondaryDataId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

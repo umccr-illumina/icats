@@ -561,6 +561,8 @@ paths:
                 $ref: '#/components/schemas/Problem'
         "204":
           description: The pipeline is successfully linked to the bundle.
+          content:
+            application/vnd.illumina.v3+json: {}
     delete:
       tags:
       - Bundle Pipeline
@@ -1385,6 +1387,95 @@ paths:
             application/vnd.illumina.v3+json:
               schema:
                 $ref: '#/components/schemas/DataFormatPagedList'
+  /api/entitledbundles:
+    get:
+      tags:
+      - Entitled Bundle
+      summary: Retrieve a list of entitled bundles.
+      operationId: getEntitledBundles
+      parameters:
+      - name: search
+        in: query
+        description: Search
+        schema:
+          type: string
+      - name: userTags
+        in: query
+        description: User tags to filter on
+        schema:
+          type: string
+      - name: technicalTags
+        in: query
+        description: Technical tags to filter on
+        schema:
+          type: string
+      - name: pageOffset
+        in: query
+        description: The amount of rows to skip in the result. Ideally this is a multiple
+          of the size parameter.
+        schema:
+          type: string
+      - name: pageToken
+        in: query
+        description: The cursor to get subsequent results. The value to use is returned
+          in the result when using cursor-based pagination.
+        schema:
+          type: string
+      - name: pageSize
+        in: query
+        description: The amount of rows to return. Use in combination with the offset
+          or cursor parameter to get subsequent results.
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: "Which field to order the results by. The default order is ascending,\
+          \ suffix with ' desc' to sort descending (suffix ' asc' also works for ascending).\
+          \ Multiple values should be separated with commas. An example: \"?sort=dateCreated,\
+          \ lastName desc\"\n\nThe attributes for which sorting is supported:\n- name\n\
+          - shortDescription"
+        schema:
+          type: string
+      responses:
+        default:
+          description: A problem occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "200":
+          description: The list of entitled bundles is successfully retrieved.
+          content:
+            application/vnd.illumina.v3+json:
+              schema:
+                $ref: '#/components/schemas/BundlePagedList'
+  /api/entitledbundles/{entitledBundleId}:
+    get:
+      tags:
+      - Entitled Bundle
+      summary: Retrieve an entitled bundle.
+      operationId: getEntitledBundle
+      parameters:
+      - name: entitledBundleId
+        in: path
+        description: The ID of the entitled bundle to retrieve
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        default:
+          description: A problem occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "200":
+          description: The entitled bundle is successfully retrieved.
+          content:
+            application/vnd.illumina.v3+json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
   /api/activationCodes:findBestMatchingForCwl:
     post:
       tags:
@@ -2315,7 +2406,6 @@ paths:
           application/vnd.illumina.v3+json:
             schema:
               $ref: '#/components/schemas/CreateCwlAnalysis'
-        required: true
       responses:
         default:
           description: A problem occurred.
@@ -2346,7 +2436,6 @@ paths:
           application/vnd.illumina.v3+json:
             schema:
               $ref: '#/components/schemas/CreateNextflowAnalysis'
-        required: true
       responses:
         default:
           description: A problem occurred.
@@ -2556,6 +2645,122 @@ paths:
             application/vnd.illumina.v3+json:
               schema:
                 $ref: '#/components/schemas/Project'
+  /api/projects/{projectId}/bundles:
+    get:
+      tags:
+      - Project
+      summary: Retrieve project bundles.
+      operationId: getProjectBundles
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        default:
+          description: A problem occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "200":
+          description: The project bundles are successfully retrieved.
+          content:
+            application/vnd.illumina.v3+json:
+              schema:
+                $ref: '#/components/schemas/ProjectBundleList'
+  /api/projects/{projectId}/bundles/{bundleId}:
+    get:
+      tags:
+      - Project
+      summary: Retrieve a project bundle.
+      operationId: getProjectBundle
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: bundleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        default:
+          description: A problem occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "200":
+          description: The project bundle is successfully retrieved.
+          content:
+            application/vnd.illumina.v3+json:
+              schema:
+                $ref: '#/components/schemas/ProjectBundle'
+    post:
+      tags:
+      - Project
+      summary: Link a bundle to a project.
+      operationId: linkProjectBundle
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: bundleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        default:
+          description: A problem occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "200":
+          description: The bundle is successfully linked to the project.
+          content:
+            application/vnd.illumina.v3+json:
+              schema:
+                $ref: '#/components/schemas/ProjectBundle'
+    delete:
+      tags:
+      - Project
+      summary: Unlink a bundle from a project.
+      operationId: unlinkProjectBundle
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: bundleId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        default:
+          description: A problem occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "200":
+          description: The bundle is successfully unlinked from the project.
   /api/projects/{projectId}/base:connectionDetails:
     post:
       tags:
@@ -3759,6 +3964,104 @@ paths:
             application/vnd.illumina.v3+json:
               schema:
                 $ref: '#/components/schemas/ProjectList'
+  /api/projects/{projectId}/data/{dataId}/secondaryData:
+    get:
+      tags:
+      - Project Data
+      summary: Retrieve a list of secondary data for data.
+      operationId: getSecondaryData
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: dataId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: A problem occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "200":
+          description: The list of secondary data is successfully retrieved.
+          content:
+            application/vnd.illumina.v3+json:
+              schema:
+                $ref: '#/components/schemas/DataList'
+  /api/projects/{projectId}/data/{dataId}/secondaryData/{secondaryDataId}:
+    post:
+      tags:
+      - Project Data
+      summary: Add secondary data to data.
+      operationId: addSecondaryData
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: dataId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: secondaryDataId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: A problem occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "204":
+          description: The secondary data is successfully added.
+          content:
+            application/vnd.illumina.v3+json: {}
+    delete:
+      tags:
+      - Project Data
+      summary: Remove secondary data from data.
+      operationId: removeSecondaryData
+      parameters:
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: dataId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: secondaryDataId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: A problem occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "204":
+          description: The secondary data is successfully removed.
+          content:
+            application/vnd.illumina.v3+json: {}
   /api/projects/{projectId}/data/{dataId}:createInlineViewUrl:
     post:
       tags:
@@ -3798,9 +4101,7 @@ paths:
       - Project Data
       summary: Retrieve a download URL for this data.
       description: "Can be used to download a file directly from the region where\
-        \ it is located, no connector is needed. Only small files can be downloaded,\
-        \ otherwise a response with status 400 will be returned if the file is too\
-        \ big."
+        \ it is located, no connector is needed."
       operationId: createDownloadUrlForData
       parameters:
       - name: projectId
@@ -4773,6 +5074,8 @@ paths:
                 $ref: '#/components/schemas/Problem'
         "204":
           description: The pipeline is successfully linked to the project.
+          content:
+            application/vnd.illumina.v3+json: {}
     delete:
       tags:
       - Project Pipeline
@@ -6697,9 +7000,9 @@ components:
           additionalProperties:
             type: string
             description: Problem parameters for e.g. request body attribute validation.
-              Not in scope of RFC 7807.
+              This attribute is not in scope of RFC 7807.
           description: Problem parameters for e.g. request body attribute validation.
-            Not in scope of RFC 7807.
+            This attribute is not in scope of RFC 7807.
         timestamp:
           type: string
           format: date-time
@@ -8413,6 +8716,26 @@ components:
           items:
             type: string
             nullable: true
+        mounts:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/AnalysisInputDataMount'
+    AnalysisInputDataMount:
+      required:
+      - dataId
+      - mountPath
+      type: object
+      properties:
+        dataId:
+          type: string
+        mountPath:
+          type: string
+          description: "The mount path is the location where the input file will be\
+            \ located on the machine that is running the pipeline. The use of a relative\
+            \ path is encouraged, but an absolute path is also allowed. The path should\
+            \ end with the file name, which may differ from the original input data."
+      nullable: true
     AnalysisParameter:
       type: object
       properties:
@@ -8463,6 +8786,11 @@ components:
           items:
             type: string
             nullable: true
+        mounts:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/AnalysisInputDataMount'
     CwlAnalysisStructuredInput:
       required:
       - inputs
@@ -9134,11 +9462,14 @@ components:
     AnalysisStep:
       required:
       - id
+      - name
       - status
       - technical
       type: object
       properties:
         id:
+          type: string
+        name:
           type: string
         status:
           type: string
@@ -9311,6 +9642,10 @@ components:
           description: The id of the storage to use for the analysis.
           format: uuid
           nullable: true
+        outputParentFolderId:
+          type: string
+          description: The id of the folder in which the output folder should be created.
+          nullable: true
         analysisInput:
           $ref: '#/components/schemas/CwlAnalysisInput'
     CreateNextflowAnalysis:
@@ -9343,6 +9678,10 @@ components:
           type: string
           description: The id of the storage to use for the analysis.
           format: uuid
+          nullable: true
+        outputParentFolderId:
+          type: string
+          description: The id of the folder in which the output folder should be created.
           nullable: true
         analysisInput:
           $ref: '#/components/schemas/NextflowAnalysisInput'
@@ -9439,6 +9778,26 @@ components:
           description: Required when specifying a storageConfigurationId. The subfolder
             determines the object prefix of your self managed storage.
           nullable: true
+    ProjectBundle:
+      required:
+      - bundle
+      - projectId
+      type: object
+      properties:
+        bundle:
+          $ref: '#/components/schemas/Bundle'
+        projectId:
+          type: string
+          format: uuid
+    ProjectBundleList:
+      required:
+      - items
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectBundle'
     BaseConnection:
       required:
       - accessToken
@@ -9917,11 +10276,12 @@ components:
             \ Alternatively, the folderPath attribute could be used as well for this."
           nullable: true
         folderPath:
+          pattern: .*/$
           type: string
           description: "The absolute path of the folder you want to create this new\
-            \ data in. Alternatively, the folderId attribute could be used as well\
-            \ for this. In case the folder path does not yet exist, it will be automatically\
-            \ created."
+            \ data in which must end with '/'. Alternatively, the folderId attribute\
+            \ could be used as well for this. In case the folder path does not yet\
+            \ exist, it will be automatically created."
           nullable: true
         formatCode:
           type: string
@@ -10710,6 +11070,8 @@ components:
             type: array
             items:
               type: string
+        contentTypeFromMessage:
+          type: boolean
         mediaType:
           type: object
           properties:
@@ -10727,8 +11089,6 @@ components:
               type: boolean
         bodyAsString:
           type: string
-        contentTypeFromMessage:
-          type: boolean
     MultipartFormDataInput:
       type: object
       properties:
